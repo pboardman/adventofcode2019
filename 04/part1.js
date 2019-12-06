@@ -15,7 +15,7 @@ function validateIncrement(password) {
     return true;
 }
 
-function validatedoubleDigit(password) {
+function validateDoubleDigit(password) {
     for (let i = 1; i < password.length; i++) {
         if (password[i] === password[i-1]) {
             return true;
@@ -29,7 +29,7 @@ for (let i = lowerLimit; i <= upperLimit; i++) {
     // split number to array
     passwordArray = i.toString().split('').map(Number)
 
-    if (validatedoubleDigit(passwordArray) && validateIncrement(passwordArray)) {
+    if (validateDoubleDigit(passwordArray) && validateIncrement(passwordArray)) {
         nbPassword++;
     }
 }
