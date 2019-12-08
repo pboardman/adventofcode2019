@@ -6,41 +6,103 @@ wirePath2 = ['L1007','U199','L531','D379','L313','U768','L87','U879','R659','U30
 let manhattanDistance = (pos) => Math.abs(pos[0] - 0) + Math.abs(pos[1] - 0);
 
 function computePositions(wirePath) {
-    let allPos = [[0,0]];
+    let allPos = {};
+    let position = [0,0];
+    let steps = 0;
     for (i in wirePath) {
         let direction = wirePath[i].split('')[0];
         let distance = parseInt(wirePath[i].substr(1));
 
         if (direction === 'U') {
             for (let y = 1; y <= distance; y++) {
-                allPos.push([allPos[allPos.length - 1][0], allPos[allPos.length - 1][1] + 1]);
+                position[1]++;
+                steps++;
+                allPos[[position[0], position[1]].toString()] = steps;
             }
 
         } else if (direction === 'D') {
             for (let y = 1; y <= distance; y++) {
-                allPos.push([allPos[allPos.length - 1][0], allPos[allPos.length - 1][1] - 1]);
+                position[1]--;
+                steps++;
+                allPos[[position[0], position[1]].toString()] = steps;
             }
 
         } else if (direction === 'R') {
             for (let x = 1; x <= distance; x++) {
-                allPos.push([allPos[allPos.length - 1][0] + 1, allPos[allPos.length - 1][1]]);
+                position[0]++;
+                steps++;
+                allPos[[position[0], position[1]].toString()] = steps;
             }
 
         } else if (direction === 'L') {
             for (let x = 1; x <= distance; x++) {
-                allPos.push([allPos[allPos.length - 1][0] - 1, allPos[allPos.length - 1][1]]);
+                position[0]--;
+                steps++;
+                allPos[[position[0], position[1]].toString()] = steps;
             }
         }
     }
-    return allPos.map(x => x.toString());
+    return allPos
+}
+
+function computeIntersections(wire1Positions, wirePath2) {
+    let intersections = {};
+    let position = [0,0];
+    let steps = 0;
+    for (i in wirePath2) {
+        let direction = wirePath2[i].split('')[0];
+        let distance = parseInt(wirePath2[i].substr(1));
+
+        if (direction === 'U') {
+            for (let y = 1; y <= distance; y++) {
+                position[1]++;
+                steps++;
+                posString = [position[0], position[1]].toString()
+                // console.log(posString)
+                if (posString in wire1Positions) {
+                    intersections[posString] = steps + wire1Positions[posString]
+                }
+            }
+
+        } else if (direction === 'D') {
+            for (let y = 1; y <= distance; y++) {
+                position[1]--;
+                steps++;
+                posString = [position[0], position[1]].toString()
+                if (posString in wire1Positions) {
+                    intersections[posString] = steps + wire1Positions[posString]
+                }
+            }
+
+        } else if (direction === 'R') {
+            for (let x = 1; x <= distance; x++) {
+                position[0]++;
+                steps++;
+                posString = [position[0], position[1]].toString()
+                if (posString in wire1Positions) {
+                    intersections[posString] = steps + wire1Positions[posString]
+                }
+            }
+
+        } else if (direction === 'L') {
+            for (let x = 1; x <= distance; x++) {
+                position[0]--;
+                steps++;
+                posString = [position[0], position[1]].toString()
+                if (posString in wire1Positions) {
+                    intersections[posString] = steps + wire1Positions[posString]
+                }
+            }
+        }
+    }
+    return intersections
 }
 
 function closestIntersection(intersections) {
-    let closest = manhattanDistance(intersections.shift().split(','));
+    let closest;
     for (i in intersections) {
-        distance = manhattanDistance(intersections[i].split(','));
-        // console.log(distance)
-        if (closest > distance) {
+        distance = manhattanDistance(i.split(','));
+        if (closest > distance || ! closest) {
             closest = distance;
         }
     }
@@ -49,13 +111,10 @@ function closestIntersection(intersections) {
 
 console.log("Computing positions for wire 1");
 let wirePositions1 = computePositions(wirePath1);
-console.log("Computing positions for wire 2");
-let wirePositions2 = computePositions(wirePath2);
 
 console.log("Finding all intersections");
-let intersections = wirePositions1.filter(value => wirePositions2.includes(value));
-// Remove 0,0
-intersections.shift()
+let intersections = computeIntersections(wirePositions1, wirePath2);
+
 
 console.log("Finding the closest intersection");
 console.log(closestIntersection(intersections));
