@@ -48,7 +48,8 @@ function computeSeq(intcodeSeq, input = 0) {
                 nextJump = 2;
                 break;
             case 4:
-                console.log(intcodeSeq[intcodeSeq[currPos + 1]]);
+                value = getParamsValues(intcodeSeq, currPos, 1)[0];
+                console.log(value);
                 nextJump = 2;
                 break;
             case 99:
