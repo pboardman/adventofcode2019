@@ -4,6 +4,7 @@ import itertools
 import logging
 import math
 import sys
+import time
 
 class IntcodeComputer:
     def __init__(self, program_code, pause_on_output = False, logger = logging):
@@ -125,6 +126,11 @@ class IntcodeComputer:
     def input_val(self):
         values = self.get_params(['p'])
         input_value = self.inputs.pop(0) if self.inputs else self.default_input
+
+        # Keeps the computer from using too much ressources while idle
+        if input_value == -1:
+            time.sleep(1)
+
         self.logger.debug(f'values: {values}')
         self.logger.debug(f'opcode input: putting {input_value} in position {values[0]}')
         self.intcode_seq[values[0]] = input_value
